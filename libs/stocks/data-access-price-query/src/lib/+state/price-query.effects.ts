@@ -1,9 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import {
-  StocksAppConfig,
-  StocksAppConfigToken
-} from '@coding-challenge/stocks/data-access-app-config';
+import {  StocksAppConfig,  StocksAppConfigToken} from '@coding-challenge/stocks/data-access-app-config';
 import { Effect } from '@ngrx/effects';
 import { DataPersistence } from '@nrwl/nx';
 import { map } from 'rxjs/operators';
@@ -29,7 +26,7 @@ export class PriceQueryEffects {
             }?token=${this.env.apiKey}`
           )
           .pipe(
-            map(resp => new PriceQueryFetched(resp as PriceQueryResponse[]))
+            map(resp => new PriceQueryFetched(resp as PriceQueryResponse[], action.toDate, action.fromDate))
           );
       },
 

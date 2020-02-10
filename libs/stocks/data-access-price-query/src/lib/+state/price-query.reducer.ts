@@ -35,7 +35,7 @@ export function priceQueryReducer(
   switch (action.type) {
     case PriceQueryActionTypes.PriceQueryFetched: {
       return priceQueryAdapter.addAll(
-        transformPriceQueryResponse(action.queryResults),
+        transformPriceQueryResponse(action),
         state
       );
     }

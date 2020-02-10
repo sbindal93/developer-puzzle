@@ -1,32 +1,35 @@
 <form [formGroup]="stockPickerForm">
   <mat-form-field>
-    <input
-      matInput
-      placeholder="Symbol e.g AAPL"
-      formControlName="symbol"
-      value=""
-    />
-    <mat-error
-      ><span
-        *ngIf="
-          !stockPickerForm.get('symbol').valid &&
-          stockPickerForm.get('symbol').touched
-        "
-        >Please enter a symbol</span
-      >
+    <input matInput placeholder="Symbol e.g AAPL" formControlName="symbol" value="" />
+    <mat-error>
+      <span *ngIf="!stockPickerForm.get('symbol').valid && stockPickerForm.get('symbol').touched">
+        Please enter a symbol
+      </span>
     </mat-error>
   </mat-form-field>
 
   <mat-form-field>
-    <mat-label>Favorite time period</mat-label>
-    <mat-select formControlName="period">
-      <mat-option
-        *ngFor="let timePeriod of timePeriods"
-        [value]="timePeriod.value"
-      >
-        {{ timePeriod.viewValue }}
-      </mat-option>
-    </mat-select>
+    <input matInput formControlName="fromDate" [matDatepicker]="pickerFrom" placeholder="Choose from date"
+      [max]="maxDate">
+    <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+    <mat-datepicker #pickerFrom></mat-datepicker>
+    <mat-error>
+      <span *ngIf="!stockPickerForm.get('fromDate').valid && stockPickerForm.get('fromDate').touched">
+        Please enter a valid from Date
+      </span>
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput formControlName="toDate" [matDatepicker]="pickerTo" placeholder="Choose to date"
+      [min]="stockPickerForm.value.fromDate" [max]="maxDate">
+    <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+    <mat-datepicker #pickerTo></mat-datepicker>
+    <mat-error>
+      <span *ngIf="!stockPickerForm.get('toDate').valid && stockPickerForm.get('toDate').touched">
+        Please enter a valid to Date
+      </span>
+    </mat-error>
   </mat-form-field>
 
   <button (click)="fetchQuote()" mat-raised-button>Go</button>
