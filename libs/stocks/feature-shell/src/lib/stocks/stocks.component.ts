@@ -1,16 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PriceQueryFacade } from '@coding-challenge/stocks/data-access-price-query';
-
+import { debounceTime } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 @Component({
   selector: 'coding-challenge-stocks',
   templateUrl: './stocks.component.html',
   styleUrls: ['./stocks.component.css']
 })
-export class StocksComponent implements OnInit {
+export class StocksComponent implements OnInit, OnDestroy {
   stockPickerForm: FormGroup;
   symbol: string;
   period: string;
+  subscription = new Subscription();
 
   quotes$ = this.priceQuery.priceQueries$;
 
@@ -32,12 +34,23 @@ export class StocksComponent implements OnInit {
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() { this.onFormDataChange() }
 
   fetchQuote() {
-    if (this.stockPickerForm.valid) {
-      const { symbol, period } = this.stockPickerForm.value;
-      this.priceQuery.fetchQuote(symbol, period);
-    }
+    let { symbol, period } = this.stockPickerForm.value;
+    this.priceQuery.fetchQuote(symbol, period);
+  };
+  onFormDataChange(): void {
+    this.subscription = this.stockPickerForm.valueChanges
+      .pipe(debounceTime(1000))
+      .subscribe(() => {
+        if (this.stockPickerForm.valid) {
+          this.fetchQuote()
+        }
+      });
+  };
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+
   }
 }
